@@ -34,8 +34,7 @@ export const loginStudent = async (req, res) => {
   if (!studentInDb) {
     return res.status(401).json({ message: "Invalid email" });
   }
-  const isPasswordValid = await comparePassword(password, studentInDb.password);
-  if (!isPasswordValid) {
+  if (comparePassword(password, studentInDb.password) === false) {
     return res.status(401).json({ message: "Invalid password" });
   }
   const token = generateToken(studentInDb._id, "student");

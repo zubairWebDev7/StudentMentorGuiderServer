@@ -172,9 +172,11 @@ export const getChatsAsMentor1 = async (req, res) => {
       conversationId: conversation._id,
     }).sort({ createdAt: 1 });
 
-    // ✅ Fetch student info (include profilePicture so the UI can render the avatar)
-    const student = await Student.findById(studentId).select("name profilePicture");
-    console.log("the student info ", studentId, student);
+    // ✅ Fetch student info
+    const student = await Student.findById(studentId).select(
+      "name"
+    );
+    console.log("the student info ",studentId,student);
 
     // ✅ Format messages
     const formattedMessages = messages.map((msg) => ({
@@ -191,10 +193,7 @@ export const getChatsAsMentor1 = async (req, res) => {
     return res.status(200).json({
       student: {
         name: student?.name || "Unknown Student",
-        // Frontend (mentor chat page) expects an object with a `url` field
-        profilePicture: student?.profilePicture?.url
-          ? { url: student.profilePicture.url }
-          : null,
+        profilePicture: student?.profilePicture?.url || null,
       },
       messages: formattedMessages,
     });
