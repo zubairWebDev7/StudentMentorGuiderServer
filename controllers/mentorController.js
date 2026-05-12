@@ -45,13 +45,12 @@ export const loginMentor = async (req, res, next) => {
     const token = generateToken(mentor._id, "mentor");
     // auto set the response to cookies
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: false, // Set to false in development (localhost)
-      sameSite: 'lax', // Change from 'strict' to 'lax'
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/'
-
-    });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/",
+});
     return res.status(200).json({
       message: "Mentor login successful",
       role: "mentor",
