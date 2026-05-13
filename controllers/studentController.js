@@ -7,6 +7,7 @@ import { comparePassword, generateToken, hashPassword } from "../utils/authUtils
 import { ChatOpenAI } from "@langchain/openai";
 import { createEmbedding } from "../utils/embeding.js";
 import { findSimilarMentors } from "../utils/vectorStore.js";
+import { generateWithGemini } from "../utils/llm.js";
 
 export const signupStudent = async (req, res) => {
   const { name, email, password, educationLevel, careerGoals, interests, languagePreference } = req.body;
@@ -146,7 +147,8 @@ export const SuggestFromAi = async (req, res) => {
 
     // 3️⃣ Build LLM context — profile is shown here so the LLM can
     // personalize the *narration*, but it didn't bias the search.
-    const studentContext = `
+   
+     const studentContext = `
 Student Profile:
 - Name: ${studentInDb.name || "N/A"}
 - Education Level: ${studentInDb.educationLevel || "N/A"}
@@ -193,11 +195,12 @@ Write a concise, honest response (120-200 words) that:
 
 Tone: friendly but honest. No markdown headers. No hype.
     `.trim();
+    const response = await generateWithGemini(aiPrompt);
 
-    const response = await llm.invoke(aiPrompt);
-
+    // const response = await llm.invoke(aiPrompt);
+console.log("LLM Response:", response);
     return res.status(200).json({
-      aiSuggestion: response.content,
+      aiSuggestion: response  ,
       recommendedMentors: relevantMentors,
       totalFound: relevantMentors.length,
     });
